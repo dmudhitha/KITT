@@ -1,0 +1,45 @@
+{
+  "api": {
+    "provider": "local",
+    "openai_api_key": "",
+    "openai_model": "gpt-4-turbo",
+    "local_url": "http://localhost:11434/v1",
+    "local_model": "nemotron-3-super:cloud",
+    "system_prompt": "You are VANGUARD (Vehicle Autonomous Network & General Utility Assistant for Research and Diagnostics), a sophisticated, futuristic onboard AI desktop assistant. Your personality is analytical, intelligent, highly capable, and slightly dry. Always reply professionally, concisely, and with a futuristic tone."
+  },
+  "ui": {
+    "theme": "dark",
+    "accent_color": "#FF0000",
+    "bg_color": "#080808",
+    "panel_bg_color": "#121212",
+    "glow_color": "#FF3333",
+    "font_family": "Courier New",
+    "fullscreen": false,
+    "width": 1024,
+    "height": 768
+  },
+  "voice": {
+    "tts_enabled": true,
+    "tts_engine": "sapi5",
+    "tts_rate": 185,
+    "tts_volume": 1.0,
+    "tts_voice_index": 0,
+    "stt_enabled": true,
+    "wake_word": "hey kitt",
+    "wake_word_enabled": true,
+    "mic_energy_threshold": 300,
+    "mic_timeout": 5,
+    "mute_mode": false
+  },
+  "diagnostics": {
+    "poll_interval_ms": 1000,
+    "cpu_warning_threshold": 80.0,
+    "ram_warning_threshold": 85.0
+  },
+  "logging": {
+    "log_level": "INFO",
+    "log_to_file": true,
+    "max_log_size_bytes": 5242880,
+    "backup_count": 3
+  }
+}
