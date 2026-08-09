@@ -147,14 +147,14 @@ def generate_sine_wav(
         logging.getLogger("vanguard").error(f"Failed to generate synth tone: {e}")
 
 
-def play_sound_async(filepath: str) -> None:
+def play_sound_async(filepath: str, volume: float = 0.8) -> None:
     """Plays a sound file in a background daemon thread so it is completely non-blocking."""
     import threading
-    threading.Thread(target=_play_sound_worker, args=(filepath,), daemon=True).start()
+    threading.Thread(target=_play_sound_worker, args=(filepath, volume), daemon=True).start()
 
 
-def _play_sound_worker(filepath: str) -> None:
-    """Worker thread that initializes pygame mixer and plays a sound."""
+def _play_sound_worker(filepath: str, volume: float = 0.8) -> None:
+    """Worker thread that initializes pygame mixer and plays a sound with volume control."""
     if not os.path.exists(filepath):
         return
 
@@ -165,6 +165,7 @@ def _play_sound_worker(filepath: str) -> None:
         if not pygame.mixer.get_init():
             pygame.mixer.init(frequency=22050, size=-16, channels=1, buffer=512)
         sound = pygame.mixer.Sound(filepath)
+        sound.set_volume(max(0.0, min(1.0, volume)))
         channel = sound.play()
         # Wait for sound to finish playing before exiting thread
         if channel:

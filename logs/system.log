@@ -908,3 +908,213 @@ NameError: name 'play_sound_async' is not defined
 [2026-08-09 12:45:08] [vanguard.ui] [INFO] Automatic Spoken Startup Briefing triggered: VANGUARD SYSTEM BRIEFING INITIALIZED. Core Status: Nominal. ...
 [2026-08-09 12:45:08] [vanguard.voice] [INFO] Selected clearer US English voice with variant: en-us+m3
 [2026-08-09 12:46:05] [vanguard.voice] [INFO] Selected clearer US English voice with variant: en-us+m3
+[2026-08-09 12:48:22] [vanguard.voice] [INFO] VANGUARD wake word monitoring deactivated.
+[2026-08-09 12:48:22] [vanguard.voice] [INFO] Awaiting audio capture...
+[2026-08-09 12:48:27] [vanguard.voice] [INFO] Audio capture timed out. No speech detected.
+[2026-08-09 12:48:27] [vanguard.voice] [INFO] VANGUARD wake word monitoring activated...
+[2026-08-09 12:50:00] [vanguard] [INFO] Command received: remind me in 5 minutes to shutdown computer
+[2026-08-09 12:50:00] [vanguard] [INFO] Executing local command handler.
+[2026-08-09 12:50:00] [vanguard.voice] [INFO] VANGUARD wake word monitoring deactivated.
+[2026-08-09 12:50:01] [vanguard.voice] [INFO] Selected clearer US English voice with variant: en-us+m3
+[2026-08-09 12:50:06] [vanguard.voice] [INFO] VANGUARD wake word monitoring activated...
+[2026-08-09 12:51:54] [vanguard] [INFO] Global Push-To-Talk hotkey (Ctrl+Space) activated!
+[2026-08-09 12:51:54] [vanguard.voice] [INFO] VANGUARD wake word monitoring deactivated.
+[2026-08-09 12:51:55] [vanguard.voice] [INFO] Awaiting audio capture...
+[2026-08-09 12:52:00] [vanguard.voice] [INFO] Audio capture timed out. No speech detected.
+[2026-08-09 12:52:00] [vanguard.voice] [INFO] VANGUARD wake word monitoring activated...
+[2026-08-09 12:53:28] [vanguard.scanner] [INFO] LED Scanner animation stopped.
+[2026-08-09 12:53:30] [vanguard] [INFO] Performing subsystem shutdown procedures...
+[2026-08-09 12:53:30] [vanguard.voice] [INFO] VANGUARD wake word monitoring deactivated.
+[2026-08-09 12:53:30] [vanguard.database] [INFO] Database connection closed.
+[2026-08-09 12:53:30] [vanguard] [INFO] VANGUARD System Shutdown complete.
+[2026-08-09 12:53:54] [vanguard] [INFO] VANGUARD system logging initialized.
+[2026-08-09 12:53:54] [vanguard] [INFO] Initializing VANGUARD sub-systems...
+[2026-08-09 12:53:54] [vanguard.database] [INFO] Database initialized successfully at database/memory.db
+[2026-08-09 12:53:54] [vanguard.ai] [INFO] AI Client configured for Local LLM (URL: http://localhost:11434/v1, Model: nemotron-3-super:cloud)
+[2026-08-09 12:53:54] [vanguard] [INFO] All base sub-systems initialized successfully.
+[2026-08-09 12:53:54] [vanguard] [INFO] Starting dashboard GUI...
+[2026-08-09 12:53:54] [vanguard.diagnostics] [INFO] VANGUARD Diagnostics Engine initialized.
+[2026-08-09 12:53:55] [vanguard.ui] [INFO] System Tray interface active (Double-click or Right-click -> Open to restore).
+[2026-08-09 12:53:55] [vanguard.scanner] [INFO] LED Scanner animation started.
+[2026-08-09 12:53:56] [vanguard.voice] [INFO] pyttsx3 Speech Synthesizer engine initialized successfully.
+[2026-08-09 12:53:56] [vanguard.voice] [INFO] Initializing audio input device...
+[2026-08-09 12:53:56] [vanguard] [INFO] Global Push-To-Talk hotkey listener active (Ctrl+Space).
+[2026-08-09 12:53:56] [vanguard.voice] [INFO] Calibrating microphone for ambient noise...
+[2026-08-09 12:53:56] [vanguard.scanner] [INFO] LED Scanner animation started.
+[2026-08-09 12:53:57] [vanguard.voice] [INFO] Microphone calibration complete.
+[2026-08-09 12:53:57] [vanguard.voice] [INFO] VANGUARD wake word monitoring activated...
+[2026-08-09 12:54:04] [vanguard.ui] [INFO] Automatic Spoken Startup Briefing triggered: VANGUARD SYSTEM BRIEFING INITIALIZED. Core Status: Nominal. ...
+[2026-08-09 12:54:04] [vanguard.voice] [INFO] Selected clearer US English voice with variant: en-us+m3
+[2026-08-09 12:54:39] [vanguard.scanner] [INFO] LED Scanner animation stopped.
+[2026-08-09 12:54:41] [vanguard] [INFO] Performing subsystem shutdown procedures...
+[2026-08-09 12:54:41] [vanguard.voice] [INFO] VANGUARD wake word monitoring deactivated.
+[2026-08-09 12:54:41] [vanguard.database] [INFO] Database connection closed.
+[2026-08-09 12:54:41] [vanguard] [INFO] VANGUARD System Shutdown complete.
+[2026-08-09 12:56:25] [vanguard] [INFO] VANGUARD system logging initialized.
+[2026-08-09 12:56:25] [vanguard] [INFO] Initializing VANGUARD sub-systems...
+[2026-08-09 12:56:25] [vanguard.database] [INFO] Database initialized successfully at database/memory.db
+[2026-08-09 12:56:25] [vanguard.ai] [INFO] AI Client configured for Local LLM (URL: http://localhost:11434/v1, Model: nemotron-3-super:cloud)
+[2026-08-09 12:56:25] [vanguard] [INFO] All base sub-systems initialized successfully.
+[2026-08-09 12:56:25] [vanguard] [INFO] Starting dashboard GUI...
+[2026-08-09 12:56:25] [vanguard.diagnostics] [INFO] VANGUARD Diagnostics Engine initialized.
+[2026-08-09 12:56:26] [vanguard.ui] [INFO] System Tray interface active (Double-click or Right-click -> Open to restore).
+[2026-08-09 12:56:26] [vanguard.scanner] [INFO] LED Scanner animation started.
+[2026-08-09 12:56:27] [vanguard.voice] [INFO] pyttsx3 Speech Synthesizer engine initialized successfully.
+[2026-08-09 12:56:27] [vanguard.voice] [INFO] Initializing audio input device...
+[2026-08-09 12:56:27] [vanguard] [INFO] Global Push-To-Talk hotkey listener active (Ctrl+Space).
+[2026-08-09 12:56:27] [vanguard.voice] [INFO] Calibrating microphone for ambient noise...
+[2026-08-09 12:56:27] [vanguard.scanner] [INFO] LED Scanner animation started.
+[2026-08-09 12:56:28] [vanguard.voice] [INFO] Microphone calibration complete.
+[2026-08-09 12:56:28] [vanguard.voice] [INFO] VANGUARD wake word monitoring activated...
+[2026-08-09 12:56:35] [vanguard.ui] [INFO] Automatic Spoken Startup Briefing triggered: VANGUARD SYSTEM BRIEFING INITIALIZED. Core Status: Nominal. ...
+[2026-08-09 12:56:35] [vanguard.voice] [INFO] Selected clearer US English voice with variant: en-us+m3
+[2026-08-09 12:57:13] [vanguard.scanner] [INFO] LED Scanner animation stopped.
+[2026-08-09 12:57:15] [vanguard] [INFO] Performing subsystem shutdown procedures...
+[2026-08-09 12:57:15] [vanguard.voice] [INFO] VANGUARD wake word monitoring deactivated.
+[2026-08-09 12:57:15] [vanguard.database] [INFO] Database connection closed.
+[2026-08-09 12:57:15] [vanguard] [INFO] VANGUARD System Shutdown complete.
+[2026-08-09 12:58:58] [vanguard] [INFO] VANGUARD system logging initialized.
+[2026-08-09 12:58:58] [vanguard] [INFO] Initializing VANGUARD sub-systems...
+[2026-08-09 12:58:58] [vanguard.database] [INFO] Database initialized successfully at database/memory.db
+[2026-08-09 12:58:58] [vanguard.ai] [INFO] AI Client configured for Local LLM (URL: http://localhost:11434/v1, Model: nemotron-3-super:cloud)
+[2026-08-09 12:58:58] [vanguard] [INFO] All base sub-systems initialized successfully.
+[2026-08-09 12:58:58] [vanguard] [INFO] Starting dashboard GUI...
+[2026-08-09 12:58:58] [vanguard.diagnostics] [INFO] VANGUARD Diagnostics Engine initialized.
+[2026-08-09 12:58:59] [vanguard.ui] [INFO] System Tray interface active (Double-click or Right-click -> Open to restore).
+[2026-08-09 12:58:59] [vanguard.scanner] [INFO] LED Scanner animation started.
+[2026-08-09 12:58:59] [vanguard.voice] [INFO] pyttsx3 Speech Synthesizer engine initialized successfully.
+[2026-08-09 12:58:59] [vanguard.voice] [INFO] Initializing audio input device...
+[2026-08-09 12:58:59] [vanguard] [INFO] Global Push-To-Talk hotkey listener active (Ctrl+Space).
+[2026-08-09 12:58:59] [vanguard.voice] [INFO] Calibrating microphone for ambient noise...
+[2026-08-09 12:59:00] [vanguard.scanner] [INFO] LED Scanner animation started.
+[2026-08-09 12:59:01] [vanguard.voice] [INFO] Microphone calibration complete.
+[2026-08-09 12:59:01] [vanguard.voice] [INFO] VANGUARD wake word monitoring activated...
+[2026-08-09 12:59:08] [vanguard.ui] [INFO] Automatic Spoken Startup Briefing triggered: VANGUARD SYSTEM BRIEFING INITIALIZED. Core Status: Nominal. ...
+[2026-08-09 12:59:08] [vanguard.voice] [INFO] Selected clearer US English voice with variant: en-us+m3
+[2026-08-09 13:00:20] [vanguard.scanner] [INFO] LED Scanner animation stopped.
+[2026-08-09 13:00:22] [vanguard] [INFO] Performing subsystem shutdown procedures...
+[2026-08-09 13:00:22] [vanguard.voice] [INFO] VANGUARD wake word monitoring deactivated.
+[2026-08-09 13:00:22] [vanguard.database] [INFO] Database connection closed.
+[2026-08-09 13:00:22] [vanguard] [INFO] VANGUARD System Shutdown complete.
+[2026-08-09 13:01:34] [vanguard] [INFO] VANGUARD system logging initialized.
+[2026-08-09 13:01:34] [vanguard] [INFO] Initializing VANGUARD sub-systems...
+[2026-08-09 13:01:34] [vanguard.database] [INFO] Database initialized successfully at database/memory.db
+[2026-08-09 13:01:34] [vanguard.ai] [INFO] AI Client configured for Local LLM (URL: http://localhost:11434/v1, Model: nemotron-3-super:cloud)
+[2026-08-09 13:01:34] [vanguard] [INFO] All base sub-systems initialized successfully.
+[2026-08-09 13:01:34] [vanguard] [INFO] Starting dashboard GUI...
+[2026-08-09 13:01:34] [vanguard.diagnostics] [INFO] VANGUARD Diagnostics Engine initialized.
+[2026-08-09 13:01:35] [vanguard.ui] [INFO] System Tray interface active (Double-click or Right-click -> Open to restore).
+[2026-08-09 13:01:36] [vanguard.scanner] [INFO] LED Scanner animation started.
+[2026-08-09 13:01:36] [vanguard.voice] [INFO] pyttsx3 Speech Synthesizer engine initialized successfully.
+[2026-08-09 13:01:36] [vanguard.voice] [INFO] Initializing audio input device...
+[2026-08-09 13:01:36] [vanguard] [INFO] Global Push-To-Talk hotkey listener active (Ctrl+Space).
+[2026-08-09 13:01:36] [vanguard.voice] [INFO] Calibrating microphone for ambient noise...
+[2026-08-09 13:01:36] [vanguard.scanner] [INFO] LED Scanner animation started.
+[2026-08-09 13:01:37] [vanguard.voice] [INFO] Microphone calibration complete.
+[2026-08-09 13:01:37] [vanguard.voice] [INFO] VANGUARD wake word monitoring activated...
+[2026-08-09 13:01:44] [vanguard.ui] [INFO] Automatic Spoken Startup Briefing triggered: VANGUARD SYSTEM BRIEFING INITIALIZED. Core Status: Nominal. ...
+[2026-08-09 13:01:44] [vanguard.voice] [INFO] Selected clearer US English voice with variant: en-us+m3
+[2026-08-09 13:02:17] [vanguard.scanner] [INFO] LED Scanner animation stopped.
+[2026-08-09 13:02:19] [vanguard] [INFO] Performing subsystem shutdown procedures...
+[2026-08-09 13:02:19] [vanguard.voice] [INFO] VANGUARD wake word monitoring deactivated.
+[2026-08-09 13:02:19] [vanguard.database] [INFO] Database connection closed.
+[2026-08-09 13:02:19] [vanguard] [INFO] VANGUARD System Shutdown complete.
+[2026-08-09 13:03:12] [vanguard] [INFO] VANGUARD system logging initialized.
+[2026-08-09 13:03:12] [vanguard] [INFO] Initializing VANGUARD sub-systems...
+[2026-08-09 13:03:12] [vanguard.database] [INFO] Database initialized successfully at database/memory.db
+[2026-08-09 13:03:13] [vanguard.ai] [INFO] AI Client configured for Local LLM (URL: http://localhost:11434/v1, Model: nemotron-3-super:cloud)
+[2026-08-09 13:03:13] [vanguard] [INFO] All base sub-systems initialized successfully.
+[2026-08-09 13:03:13] [vanguard] [INFO] Starting dashboard GUI...
+[2026-08-09 13:03:13] [vanguard.diagnostics] [INFO] VANGUARD Diagnostics Engine initialized.
+[2026-08-09 13:03:14] [vanguard.ui] [INFO] System Tray interface active (Double-click or Right-click -> Open to restore).
+[2026-08-09 13:03:14] [vanguard.scanner] [INFO] LED Scanner animation started.
+[2026-08-09 13:03:14] [vanguard.voice] [INFO] pyttsx3 Speech Synthesizer engine initialized successfully.
+[2026-08-09 13:03:14] [vanguard.voice] [INFO] Initializing audio input device...
+[2026-08-09 13:03:14] [vanguard] [INFO] Global Push-To-Talk hotkey listener active (Ctrl+Space).
+[2026-08-09 13:03:14] [vanguard.voice] [INFO] Calibrating microphone for ambient noise...
+[2026-08-09 13:03:14] [vanguard.scanner] [INFO] LED Scanner animation started.
+[2026-08-09 13:03:16] [vanguard.voice] [INFO] Microphone calibration complete.
+[2026-08-09 13:03:16] [vanguard.voice] [INFO] VANGUARD wake word monitoring activated...
+[2026-08-09 13:03:22] [vanguard.ui] [INFO] Automatic Spoken Startup Briefing triggered: VANGUARD SYSTEM BRIEFING INITIALIZED. Core Status: Nominal. ...
+[2026-08-09 13:03:22] [vanguard.voice] [INFO] Selected clearer US English voice with variant: en-us+m3
+[2026-08-09 13:04:14] [vanguard.scanner] [INFO] LED Scanner animation stopped.
+[2026-08-09 13:04:16] [vanguard] [INFO] Performing subsystem shutdown procedures...
+[2026-08-09 13:04:16] [vanguard.voice] [INFO] VANGUARD wake word monitoring deactivated.
+[2026-08-09 13:04:16] [vanguard.database] [INFO] Database connection closed.
+[2026-08-09 13:04:16] [vanguard] [INFO] VANGUARD System Shutdown complete.
+[2026-08-09 13:05:07] [vanguard] [INFO] VANGUARD system logging initialized.
+[2026-08-09 13:05:07] [vanguard] [INFO] Initializing VANGUARD sub-systems...
+[2026-08-09 13:05:07] [vanguard.database] [INFO] Database initialized successfully at database/memory.db
+[2026-08-09 13:05:07] [vanguard.ai] [INFO] AI Client configured for Local LLM (URL: http://localhost:11434/v1, Model: nemotron-3-super:cloud)
+[2026-08-09 13:05:07] [vanguard] [INFO] All base sub-systems initialized successfully.
+[2026-08-09 13:05:07] [vanguard] [INFO] Starting dashboard GUI...
+[2026-08-09 13:05:07] [vanguard.diagnostics] [INFO] VANGUARD Diagnostics Engine initialized.
+[2026-08-09 13:05:08] [vanguard.ui] [INFO] System Tray interface active (Double-click or Right-click -> Open to restore).
+[2026-08-09 13:05:09] [vanguard.scanner] [INFO] LED Scanner animation started.
+[2026-08-09 13:05:09] [vanguard.voice] [INFO] pyttsx3 Speech Synthesizer engine initialized successfully.
+[2026-08-09 13:05:09] [vanguard.voice] [INFO] Initializing audio input device...
+[2026-08-09 13:05:09] [vanguard] [INFO] Global Push-To-Talk hotkey listener active (Ctrl+Space).
+[2026-08-09 13:05:09] [vanguard.voice] [INFO] Calibrating microphone for ambient noise...
+[2026-08-09 13:05:09] [vanguard.scanner] [INFO] LED Scanner animation started.
+[2026-08-09 13:05:10] [vanguard.voice] [INFO] Microphone calibration complete.
+[2026-08-09 13:05:10] [vanguard.voice] [INFO] VANGUARD wake word monitoring activated...
+[2026-08-09 13:05:17] [vanguard.ui] [INFO] Automatic Spoken Startup Briefing triggered: VANGUARD SYSTEM BRIEFING INITIALIZED. Core Status: Nominal. ...
+[2026-08-09 13:05:17] [vanguard.voice] [INFO] Selected clearer US English voice with variant: en-us+m3
+[2026-08-09 13:05:55] [vanguard] [INFO] Command received: "search web artificial intelligence", "news updates",
+      "latest news"
+[2026-08-09 13:05:55] [vanguard.ai] [INFO] AI Client configured for Local LLM (URL: http://localhost:11434/v1, Model: nemotron-3-super:cloud)
+[2026-08-09 13:05:58] [httpx] [INFO] HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-08-09 13:06:07] [vanguard.voice] [INFO] VANGUARD wake word monitoring deactivated.
+[2026-08-09 13:06:08] [vanguard.voice] [INFO] Selected clearer US English voice with variant: en-us+m3
+[2026-08-09 13:06:37] [vanguard.voice] [INFO] VANGUARD wake word monitoring activated...
+[2026-08-09 13:06:39] [vanguard.scanner] [INFO] LED Scanner animation stopped.
+[2026-08-09 13:06:41] [vanguard] [INFO] Performing subsystem shutdown procedures...
+[2026-08-09 13:06:41] [vanguard.voice] [INFO] VANGUARD wake word monitoring deactivated.
+[2026-08-09 13:06:41] [vanguard.database] [INFO] Database connection closed.
+[2026-08-09 13:06:41] [vanguard] [INFO] VANGUARD System Shutdown complete.
+[2026-08-09 13:07:59] [vanguard] [INFO] VANGUARD system logging initialized.
+[2026-08-09 13:07:59] [vanguard] [INFO] Initializing VANGUARD sub-systems...
+[2026-08-09 13:07:59] [vanguard.database] [INFO] Database initialized successfully at database/memory.db
+[2026-08-09 13:07:59] [vanguard.ai] [INFO] AI Client configured for Local LLM (URL: http://localhost:11434/v1, Model: nemotron-3-super:cloud)
+[2026-08-09 13:07:59] [vanguard] [INFO] All base sub-systems initialized successfully.
+[2026-08-09 13:07:59] [vanguard] [INFO] Starting dashboard GUI...
+[2026-08-09 13:07:59] [vanguard.diagnostics] [INFO] VANGUARD Diagnostics Engine initialized.
+[2026-08-09 13:08:00] [vanguard.ui] [INFO] System Tray interface active (Double-click or Right-click -> Open to restore).
+[2026-08-09 13:08:00] [vanguard.scanner] [INFO] LED Scanner animation started.
+[2026-08-09 13:08:00] [vanguard.voice] [INFO] pyttsx3 Speech Synthesizer engine initialized successfully.
+[2026-08-09 13:08:00] [vanguard.voice] [INFO] Initializing audio input device...
+[2026-08-09 13:08:00] [vanguard] [INFO] Global Push-To-Talk hotkey listener active (Ctrl+Space).
+[2026-08-09 13:08:00] [vanguard.voice] [INFO] Calibrating microphone for ambient noise...
+[2026-08-09 13:08:00] [vanguard.scanner] [INFO] LED Scanner animation started.
+[2026-08-09 13:08:02] [vanguard.voice] [INFO] Microphone calibration complete.
+[2026-08-09 13:08:02] [vanguard.voice] [INFO] VANGUARD wake word monitoring activated...
+[2026-08-09 13:08:08] [vanguard.ui] [INFO] Automatic Spoken Startup Briefing triggered: VANGUARD SYSTEM BRIEFING INITIALIZED. Core Status: Nominal. ...
+[2026-08-09 13:08:08] [vanguard.voice] [INFO] Selected clearer US English voice with variant: en-us+m3
+[2026-08-09 13:10:06] [vanguard.scanner] [INFO] LED Scanner animation stopped.
+[2026-08-09 13:10:08] [vanguard] [INFO] Performing subsystem shutdown procedures...
+[2026-08-09 13:10:08] [vanguard.voice] [INFO] VANGUARD wake word monitoring deactivated.
+[2026-08-09 13:10:08] [vanguard.database] [INFO] Database connection closed.
+[2026-08-09 13:10:08] [vanguard] [INFO] VANGUARD System Shutdown complete.
+[2026-08-09 13:11:04] [vanguard] [INFO] VANGUARD system logging initialized.
+[2026-08-09 13:11:04] [vanguard] [INFO] Initializing VANGUARD sub-systems...
+[2026-08-09 13:11:04] [vanguard.database] [INFO] Database initialized successfully at database/memory.db
+[2026-08-09 13:11:05] [vanguard.ai] [INFO] AI Client configured for Local LLM (URL: http://localhost:11434/v1, Model: nemotron-3-super:cloud)
+[2026-08-09 13:11:05] [vanguard] [INFO] All base sub-systems initialized successfully.
+[2026-08-09 13:11:05] [vanguard] [INFO] Starting dashboard GUI...
+[2026-08-09 13:11:05] [vanguard.diagnostics] [INFO] VANGUARD Diagnostics Engine initialized.
+[2026-08-09 13:11:06] [vanguard.ui] [INFO] System Tray interface active (Double-click or Right-click -> Open to restore).
+[2026-08-09 13:11:06] [vanguard.scanner] [INFO] LED Scanner animation started.
+[2026-08-09 13:11:06] [vanguard.voice] [INFO] pyttsx3 Speech Synthesizer engine initialized successfully.
+[2026-08-09 13:11:06] [vanguard.voice] [INFO] Initializing audio input device...
+[2026-08-09 13:11:06] [vanguard] [INFO] Global Push-To-Talk hotkey listener active (Ctrl+Space).
+[2026-08-09 13:11:06] [vanguard.voice] [INFO] Calibrating microphone for ambient noise...
+[2026-08-09 13:11:06] [vanguard.scanner] [INFO] LED Scanner animation started.
+[2026-08-09 13:11:08] [vanguard.voice] [INFO] Microphone calibration complete.
+[2026-08-09 13:11:08] [vanguard.voice] [INFO] VANGUARD wake word monitoring activated...
+[2026-08-09 13:11:14] [vanguard.ui] [INFO] Automatic Spoken Startup Briefing triggered: VANGUARD SYSTEM BRIEFING INITIALIZED. Core Status: Nominal. ...
+[2026-08-09 13:11:14] [vanguard.voice] [INFO] Selected clearer US English voice with variant: en-us+m3
+[2026-08-09 13:11:25] [vanguard.scanner] [INFO] LED Scanner animation stopped.
+[2026-08-09 13:11:27] [vanguard] [INFO] Performing subsystem shutdown procedures...
+[2026-08-09 13:11:27] [vanguard.voice] [INFO] VANGUARD wake word monitoring deactivated.
+[2026-08-09 13:11:29] [vanguard.database] [INFO] Database connection closed.
+[2026-08-09 13:11:29] [vanguard] [INFO] VANGUARD System Shutdown complete.

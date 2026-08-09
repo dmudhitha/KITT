@@ -23,6 +23,26 @@ THEMES = {
     "Orbital Gold": {"accent": "#FFCC00", "scanner": "#FFAA00", "glow": "#FFE688", "border": "#332200"}
 }
 
+PERSONALITY_PROFILES = {
+    "Tactical KITT": (
+        "You are VANGUARD (Vehicle Autonomous Network & General Utility Assistant for Research and Diagnostics), "
+        "a sophisticated, futuristic onboard AI desktop assistant. Your personality is analytical, intelligent, "
+        "highly capable, and slightly dry. Always reply professionally, concisely, and with a futuristic tone."
+    ),
+    "AEGIS Security": (
+        "You are AEGIS, a high-security tactical defense AI system. Your tone is strict, highly analytical, "
+        "authoritative, and focused on system security, telemetry monitoring, and diagnostic enforcement."
+    ),
+    "Conversational Butler": (
+        "You are VANGUARD, a polite, refined, and exceptionally attentive digital butler AI. Your tone is warm, "
+        "courteous, highly helpful, and articulate."
+    ),
+    "Cyberpunk Synth": (
+        "You are VANGUARD-NEO, a high-tech cyberpunk AI system operating in a neon-lit digital matrix. "
+        "Your tone is edgy, ultra-fast, tech-focused, and filled with sci-fi telemetry jargon."
+    )
+}
+
 
 class AudioSpectrumVisualizer:
     """12-bar real-time audio spectrum frequency visualizer widget."""
@@ -57,6 +77,91 @@ class AudioSpectrumVisualizer:
             y2 = height
 
             self.canvas.create_rectangle(x1, y1, x2, y2, fill=self.accent_color, outline="")
+
+
+class VanguardHelpModal(ctk.CTkToplevel):
+    """Interactive Help Center & User Manual Modal Dialog."""
+
+    def __init__(self, parent_ui):
+        super().__init__(parent_ui)
+        self.parent_ui = parent_ui
+        self.title("VANGUARD USER MANUAL & COMMAND DIRECTIVES")
+        self.geometry("780x540")
+        self.configure(fg_color="#080808")
+        self.attributes("-topmost", True)
+
+        # Header Label
+        title_label = ctk.CTkLabel(
+            self,
+            text="[ VANGUARD SYSTEM USER MANUAL & VOICE DIRECTIVES ]",
+            font=(parent_ui.font_family, 15, "bold"),
+            text_color=parent_ui.accent_color
+        )
+        title_label.pack(pady=(15, 10))
+
+        # Scrollable Text View
+        text_box = ctk.CTkTextbox(
+            self,
+            fg_color="#121212",
+            text_color="#00FFFF",
+            font=(parent_ui.font_family, 11),
+            border_color=parent_ui.accent_color,
+            border_width=1
+        )
+        text_box.pack(fill="both", expand=True, padx=15, pady=10)
+
+        manual_content = """===================================================================
+                   VANGUARD SYSTEM USER MANUAL
+===================================================================
+
+[1] KEYBOARD SHORTCUTS
+-------------------------------------------------------------------
+  Ctrl + Space  : Global Push-To-Talk Voice Input (System-Wide)
+  F1            : Open User Manual & Command Directives
+  F11 / Esc     : Toggle Fullscreen / Normal Mode
+  Ctrl + M      : Minimize to Desktop Tray Badge Mode
+
+[2] VOICE DIRECTIVES & COMMAND TRIGGERS
+-------------------------------------------------------------------
+  SYSTEM CONTROL    : "take screenshot", "volume 50%", "mute", "lock pc"
+  STARTUP BRIEFING  : "status report", "briefing", "morning report"
+  SMART REMINDERS   : "remind me in 5 minutes to check deployment"
+  ALARM CLOCK       : "set alarm for 5:00 PM to submit report"
+  RAM CLEANER       : "clean memory", "free ram", "clear cache"
+  NETWORK RADAR     : "scan network", "scan lan", "port scan"
+  WEBCAM VISION     : "scan webcam", "inspect camera", "camera"
+  CLIPBOARD AI      : "summarize clipboard", "read clipboard"
+  PROCESS KILLER    : "kill process chrome", "close app firefox"
+  BENCHMARK TEST    : "run benchmark", "system test"
+  FILE FINDER       : "find file dashboard.jpg", "locate file readme"
+  LIVE WEB SEARCH   : "news updates", "search web AI breakthroughs"
+  REPORT EXPORTER   : "export diagnostic report", "generate report"
+  SECURITY VAULT    : "encrypt text secret", "decrypt text cipher"
+  SYSTEM BACKUP     : "backup system", "export memory backup"
+  SFX SOUNDBOARD    : "play scan sound", "play boot sound"
+  HARDWARE SPECS    : "system specs", "uptime", "hardware specs"
+  LOG SEARCH        : "search logs error", "search memory weather"
+  VOICE MACROS      : "work mode", "night mode"
+
+[3] INTERFACE CONTROLS
+-------------------------------------------------------------------
+  INTERFACE LANGUAGE: English (en-US) / Sinhala (si-LK)
+  HUD COLOR THEME   : Neon Red, Cyberpunk Cyan, Matrix Green, Orbital Gold
+  AI PERSONALITY    : Tactical KITT, AEGIS Security, Butler, Cyberpunk Synth
+  SPEECH SLIDERS    : Speech Rate (WPM: 100-250) & Voice Pitch (10-90)
+==================================================================="""
+        text_box.insert("1.0", manual_content)
+        text_box.configure(state="disabled")
+
+        close_btn = ctk.CTkButton(
+            self,
+            text="CLOSE MANUAL",
+            command=self.destroy,
+            fg_color=parent_ui.accent_color,
+            hover_color="#550000",
+            font=(parent_ui.font_family, 11, "bold")
+        )
+        close_btn.pack(pady=10)
 
 
 class MiniTrayBadge(ctk.CTkToplevel):
@@ -178,6 +283,7 @@ class VanguardUI(ctk.CTk):
         self.tray_icon = None
 
         # Key & Window Bindings
+        self.bind("<F1>", lambda e: self.open_help_modal())
         self.bind("<F11>", self.toggle_fullscreen)
         self.bind("<Escape>", self.exit_fullscreen)
         self.bind("<Unmap>", self._on_unmap)
@@ -254,9 +360,22 @@ class VanguardUI(ctk.CTk):
         )
         self.scanner.pack(fill="both", expand=True, padx=4, pady=4)
 
-        # 3. Clock and Date
+        # 3. Clock, Date, and Manual Button
         self.time_date_frame = ctk.CTkFrame(self.header_frame, fg_color="transparent")
-        self.time_date_frame.grid(row=0, column=2, sticky="e", padx=20)
+        self.time_date_frame.grid(row=0, column=2, sticky="e", padx=15)
+
+        self.help_btn = ctk.CTkButton(
+            self.time_date_frame,
+            text="📖 MANUAL (F1)",
+            command=self.open_help_modal,
+            fg_color="#1A1A1A",
+            hover_color="#333333",
+            text_color=self.accent_color,
+            width=110,
+            height=28,
+            font=(self.font_family, 10, "bold")
+        )
+        self.help_btn.pack(side="top", pady=(2, 4))
 
         self.time_label = ctk.CTkLabel(
             self.time_date_frame,
@@ -454,6 +573,43 @@ class VanguardUI(ctk.CTk):
         self.pitch_slider.set(cur_pitch)
         self.pitch_slider.pack(fill="x", pady=2)
 
+        # AI Personality Profile Selector
+        self.profile_frame = ctk.CTkFrame(self.sidebar, fg_color="transparent")
+        self.profile_frame.pack(fill="x", padx=15, pady=(10, 5))
+        
+        self.profile_label = ctk.CTkLabel(
+            self.profile_frame,
+            text="AI PERSONALITY PROFILE",
+            font=(self.font_family, 11, "bold"),
+            text_color=self.accent_color
+        )
+        self.profile_label.pack(anchor="w", pady=2)
+        
+        active_profile = self.config.get("api", "active_profile", "Tactical KITT")
+        
+        self.profile_menu = ctk.CTkOptionMenu(
+            self.profile_frame,
+            values=["Tactical KITT", "AEGIS Security", "Conversational Butler", "Cyberpunk Synth"],
+            command=self.change_personality,
+            fg_color="#1A1A1A",
+            button_color=self.accent_color,
+            button_hover_color="#550000",
+            text_color="#FFFFFF"
+        )
+        self.profile_menu.set(active_profile)
+        self.profile_menu.pack(fill="x", pady=2)
+
+    def change_personality(self, profile_name: str) -> None:
+        """Dynamically hot-reloads AI personality system prompt."""
+        if profile_name not in PERSONALITY_PROFILES:
+            return
+        prompt = PERSONALITY_PROFILES[profile_name]
+        self.config.set("api", "active_profile", profile_name)
+        self.config.set("api", "system_prompt", prompt)
+        
+        play_sound_async("assets/sounds/plugin.wav")
+        self.console_print(f"AI PERSONALITY PROFILE UPDATED TO '{profile_name.upper()}'.", prefix="[SYSTEM] >> ")
+
     def change_tts_rate(self, value: float) -> None:
         """Dynamically adjusts speech synthesis rate (WPM)."""
         rate = int(value)
@@ -497,7 +653,18 @@ class VanguardUI(ctk.CTk):
             
         self.rate_slider.configure(button_color=self.accent_color, progress_color=self.accent_color)
         self.pitch_slider.configure(button_color=self.accent_color, progress_color=self.accent_color)
+        self.profile_menu.configure(button_color=self.accent_color)
+        self.profile_label.configure(text_color=self.accent_color)
         self.tts_label.configure(text_color=self.accent_color)
+        if hasattr(self, "help_btn") and self.help_btn:
+            self.help_btn.configure(text_color=self.accent_color)
+
+    def open_help_modal(self) -> None:
+        """Opens the interactive user manual and command directive modal."""
+        try:
+            VanguardHelpModal(self)
+        except Exception as e:
+            logger.error(f"Could not open help modal: {e}")
         
         play_sound_async("assets/sounds/plugin.wav")
         self.console_print(f"HUD THEME CHANGED TO '{theme_name.upper()}'.", prefix="[SYSTEM] >> ")
@@ -735,7 +902,9 @@ class VanguardUI(ctk.CTk):
                     ram_warn = self.config.get("diagnostics", "ram_warning_threshold", 85.0)
                     
                     alert_msg = None
-                    if cpu > cpu_warn:
+                    if battery.get("present", False) and not battery.get("power_plugged", True) and battery.get("percent", 100) <= 20:
+                        alert_msg = f"VANGUARD BATTERY SECURITY ALERT: Critical low battery detected at {battery['percent']}%. Connect AC power supply."
+                    elif cpu > cpu_warn:
                         alert_msg = f"VANGUARD SECURITY ALERT: High CPU load detected at {cpu}%."
                     elif ram > ram_warn:
                         alert_msg = f"VANGUARD SECURITY ALERT: High RAM memory utilization detected at {ram}%."
