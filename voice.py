@@ -78,7 +78,7 @@ class SpeechRecognizer:
             return
 
         if self.stop_listening_fn:
-            self.stop_listening_fn(wait_for_stop=False)
+            self.stop_listening_fn(wait_for_stop=True)
             self.stop_listening_fn = None
 
         # Spin up a worker thread to wait for mic release and launch listeners safely
@@ -102,7 +102,7 @@ class SpeechRecognizer:
         """Stops background thread listener."""
         if self.stop_listening_fn:
             logger.info("VANGUARD wake word monitoring deactivated.")
-            self.stop_listening_fn(wait_for_stop=False)
+            self.stop_listening_fn(wait_for_stop=True)
             self.stop_listening_fn = None
 
     def _background_callback(self, recognizer: sr.Recognizer, audio: sr.AudioData) -> None:
@@ -117,11 +117,15 @@ class SpeechRecognizer:
         """Transcribes background audio, looking for the wake word."""
         try:
             logger.debug("Transcribing background capture...")
-            text = self.recognizer.recognize_google(audio).lower().strip()
+            stt_lang = self.config.get("voice", "stt_language", "en-US")
+            text = self.recognizer.recognize_google(audio, language=stt_lang).lower().strip()
             logger.debug(f"Background capture: '{text}'")
             
-            # Match common phonetical variations of "hey kitt"
-            wake_options = ["hey kitt", "hey kit", "hai kitt", "hai kit", "hi kitt", "hi kit", "hey kid", "hey cat"]
+            # Match common phonetical variations of "hey kitt" including Sinhala scripts
+            wake_options = [
+                "hey kitt", "hey kit", "hai kitt", "hai kit", "hi kitt", "hi kit", "hey kid", "hey cat",
+                "හේ කිට්", "හේ කිට්ටෝ", "කිට්", "කිට්ටෝ"
+            ]
             matched_wake = None
             for wake in wake_options:
                 if wake in text:
@@ -176,7 +180,8 @@ class SpeechRecognizer:
                 audio = self.recognizer.listen(source, timeout=self.mic_timeout, phrase_time_limit=self.mic_timeout)
             
             self.on_status_change("TRANSCRIBING...", True)
-            text = self.recognizer.recognize_google(audio).strip()
+            stt_lang = self.config.get("voice", "stt_language", "en-US")
+            text = self.recognizer.recognize_google(audio, language=stt_lang).strip()
             logger.info(f"Transcribed speech command: '{text}'")
             
             # Post command back to UI thread
@@ -283,43 +288,55 @@ class SpeechSynthesizer:
                 self.engine.setProperty("volume", volume)
                 self.engine.setProperty("pitch", pitch)
 
+                # Check if text contains Sinhala characters (Unicode range \u0d80 - \u0dff)
+                is_sinhala = any('\u0d80' <= char <= '\u0dff' for char in text)
+
                 voices = self.engine.getProperty("voices")
                 if voices:
                     if voice_index >= len(voices):
                         voice_index = 0
                     
-                    # Prioritize high-clarity English voices (like US English) on espeak/Linux
                     selected_voice_id = voices[voice_index].id
                     
-                    # 1. Look for English (US)
-                    for v in voices:
-                        v_id_lower = v.id.lower()
-                        v_name_lower = v.name.lower()
-                        if "en-us" in v_id_lower or "english-us" in v_id_lower or "america" in v_name_lower:
-                            selected_voice_id = v.id
-                            # Append variant for cleaner/more natural tone on Linux (e.g. 'en-us+m3')
-                            if variant and ("en" in selected_voice_id or "gmw" in selected_voice_id):
-                                selected_voice_id = "en-us" + variant
-                            logger.info(f"Selected clearer US English voice with variant: {selected_voice_id}")
-                            break
-                    else:
-                        # 2. Fallback to generic English
+                    if is_sinhala:
+                        # Find the Sinhala voice (e.g. ID inc/si or name containing 'sinhala')
                         for v in voices:
                             v_id_lower = v.id.lower()
-                            if "en" in v_id_lower or "english" in v_id_lower:
+                            v_name_lower = v.name.lower()
+                            if "sinhala" in v_name_lower or "inc/si" == v_id_lower or v_id_lower.endswith("/si") or v_id_lower == "si":
                                 selected_voice_id = v.id
+                                logger.info(f"Selected Sinhala TTS voice: {v.name}")
+                                break
+                    else:
+                        # 1. Look for English (US)
+                        for v in voices:
+                            v_id_lower = v.id.lower()
+                            v_name_lower = v.name.lower()
+                            if "en-us" in v_id_lower or "english-us" in v_id_lower or "america" in v_name_lower:
+                                selected_voice_id = v.id
+                                # Append variant for cleaner/more natural tone on Linux (e.g. 'en-us+m3')
                                 if variant and ("en" in selected_voice_id or "gmw" in selected_voice_id):
-                                    selected_voice_id = "en" + variant
-                                logger.info(f"Fallback to English voice with variant: {selected_voice_id}")
+                                    selected_voice_id = "en-us" + variant
+                                logger.info(f"Selected clearer US English voice with variant: {selected_voice_id}")
                                 break
                         else:
-                            # 3. Fallback to male search
+                            # 2. Fallback to generic English
                             for v in voices:
-                                name_lower = v.name.lower()
-                                if "david" in name_lower or ("male" in name_lower and "female" not in name_lower):
+                                v_id_lower = v.id.lower()
+                                if "en" in v_id_lower or "english" in v_id_lower:
                                     selected_voice_id = v.id
-                                    logger.info(f"Fallback male voice matched: {v.name}")
+                                    if variant and ("en" in selected_voice_id or "gmw" in selected_voice_id):
+                                        selected_voice_id = "en" + variant
+                                    logger.info(f"Fallback to English voice with variant: {selected_voice_id}")
                                     break
+                            else:
+                                # 3. Fallback to male search
+                                for v in voices:
+                                    name_lower = v.name.lower()
+                                    if "david" in name_lower or ("male" in name_lower and "female" not in name_lower):
+                                        selected_voice_id = v.id
+                                        logger.info(f"Fallback male voice matched: {v.name}")
+                                        break
                     
                     self.engine.setProperty("voice", selected_voice_id)
 

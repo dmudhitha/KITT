@@ -179,3 +179,50 @@ def time_sleep(seconds: float) -> None:
     """Tiny helper to sleep without blocking global namespaces."""
     import time
     time.sleep(seconds)
+
+
+def ensure_default_sounds() -> None:
+    """Generates all futuristic sci-fi soundboard audio files if not present."""
+    sound_dir = "assets/sounds"
+    generate_sine_wav(os.path.join(sound_dir, "boot.wav"), [440.0, 880.0, 1760.0], duration=0.4)
+    generate_sine_wav(os.path.join(sound_dir, "shutdown.wav"), [1760.0, 880.0, 440.0], duration=0.4)
+    generate_sine_wav(os.path.join(sound_dir, "wake.wav"), [1200.0, 1600.0], duration=0.15)
+    generate_sine_wav(os.path.join(sound_dir, "plugin.wav"), [880.0, 1320.0, 1760.0], duration=0.2)
+    generate_sine_wav(os.path.join(sound_dir, "calc.wav"), [1000.0, 1500.0], duration=0.1)
+    generate_sine_wav(os.path.join(sound_dir, "error.wav"), [300.0, 220.0], duration=0.3)
+    generate_sine_wav(os.path.join(sound_dir, "scan.wav"), [600.0, 900.0, 1200.0], duration=0.25)
+
+
+def setup_autostart(enable: bool = True) -> bool:
+    """Configures desktop autostart entry for VANGUARD on system boot."""
+    import sys
+    try:
+        autostart_dir = os.path.expanduser("~/.config/autostart")
+        desktop_file = os.path.join(autostart_dir, "vanguard.desktop")
+        
+        if not enable:
+            if os.path.exists(desktop_file):
+                os.remove(desktop_file)
+            return True
+            
+        os.makedirs(autostart_dir, exist_ok=True)
+        main_py_path = os.path.abspath("main.py")
+        python_bin = sys.executable
+        
+        content = f"""[Desktop Entry]
+Type=Application
+Name=VANGUARD AI Assistant
+Comment=Vehicle Autonomous Network & General Utility Assistant
+Exec={python_bin} {main_py_path} --autostart
+Icon=utilities-terminal
+Terminal=false
+Categories=Utility;
+X-GNOME-Autostart-enabled=true
+"""
+        with open(desktop_file, "w", encoding="utf-8") as f:
+            f.write(content)
+        logging.getLogger("vanguard").info(f"System autostart entry updated: {desktop_file}")
+        return True
+    except Exception as e:
+        logging.getLogger("vanguard").error(f"Autostart setup failed: {e}")
+        return False

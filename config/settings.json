@@ -9,7 +9,8 @@
   },
   "ui": {
     "theme": "dark",
-    "accent_color": "#FF0000",
+    "active_theme": "Neon Red",
+    "accent_color": "#FF3333",
     "bg_color": "#080808",
     "panel_bg_color": "#121212",
     "glow_color": "#FF3333",
@@ -18,13 +19,27 @@
     "width": 1024,
     "height": 768
   },
+  "routines": {
+    "work mode": [
+      "open browser github.com",
+      "volume 50%",
+      "briefing"
+    ],
+    "night mode": [
+      "volume 10%",
+      "mute"
+    ]
+  },
   "voice": {
     "tts_enabled": true,
     "tts_engine": "sapi5",
-    "tts_rate": 185,
+    "tts_rate": 150,
     "tts_volume": 1.0,
+    "tts_pitch": 45,
+    "tts_variant": "+m3",
     "tts_voice_index": 0,
     "stt_enabled": true,
+    "stt_language": "si-LK",
     "wake_word": "hey kitt",
     "wake_word_enabled": true,
     "mic_energy_threshold": 300,
@@ -35,6 +50,10 @@
     "poll_interval_ms": 1000,
     "cpu_warning_threshold": 80.0,
     "ram_warning_threshold": 85.0
+  },
+  "briefing": {
+    "enabled": true,
+    "location": "Colombo"
   },
   "logging": {
     "log_level": "INFO",

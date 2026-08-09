@@ -11,7 +11,7 @@ import threading
 from typing import Optional
 from config import ConfigManager
 from database import DatabaseManager
-from utils import setup_logging
+from utils import setup_logging, play_sound_async
 from ui import VanguardUI
 from ai import AIEngine
 from voice import SpeechRecognizer, SpeechSynthesizer
@@ -313,16 +313,26 @@ def main() -> None:
     def handle_shutdown() -> None:
         """Callback to release locks and save files before UI shuts down."""
         logger.info("Performing subsystem shutdown procedures...")
+        if 'hotkey_listener' in globals() and hotkey_listener:
+            try:
+                hotkey_listener.stop()
+            except Exception:
+                pass
         if voice_recognizer:
             voice_recognizer.stop_background_listening()
         # Explicitly delete the pyttsx3 engine proxy during active namespaces to prevent GC warnings on exit
         if voice_synthesizer and voice_synthesizer.engine:
             try:
                 del voice_synthesizer.engine
-            except:
+            except Exception:
                 pass
         db.close()
         logger.info("VANGUARD System Shutdown complete.")
+
+    def handle_speak(text: str) -> None:
+        """Helper to speak arbitrary text aloud via speech synthesizer."""
+        if voice_synthesizer:
+            voice_synthesizer.speak(text)
 
     # Create and run CustomTkinter Application
     ui_app = VanguardUI(
@@ -330,11 +340,16 @@ def main() -> None:
         db_manager=db,
         on_send_callback=handle_send,
         on_mic_callback=handle_mic,
-        on_shutdown_callback=handle_shutdown
+        on_shutdown_callback=handle_shutdown,
+        on_speak_callback=handle_speak
     )
     
+    # Ensure default soundboard SFX files exist
+    from utils import ensure_default_sounds
+    ensure_default_sounds()
+
     # Initialize Voice and Plugin subsystems with active UI context callbacks
-    global voice_recognizer, voice_synthesizer, plugin_manager
+    global voice_recognizer, voice_synthesizer, plugin_manager, hotkey_listener
     voice_synthesizer = SpeechSynthesizer(config_manager=config)
     plugin_manager = PluginManager(config_manager=config, db_manager=db)
     voice_recognizer = SpeechRecognizer(
@@ -343,6 +358,28 @@ def main() -> None:
         on_status_change=handle_voice_status
     )
     
+    # Register Global Push-To-Talk Hotkey (Ctrl+Space)
+    try:
+        from pynput import keyboard
+
+        def on_hotkey_activated():
+            logger.info("Global Push-To-Talk hotkey (Ctrl+Space) activated!")
+            play_sound_async("assets/sounds/wake.wav")
+            handle_mic()
+
+        hotkey_listener = keyboard.GlobalHotKeys({'<ctrl>+<space>': on_hotkey_activated})
+        hotkey_listener.start()
+        logger.info("Global Push-To-Talk hotkey listener active (Ctrl+Space).")
+    except Exception as e:
+        logger.warning(f"Could not initialize global hotkey: {e}")
+        hotkey_listener = None
+
+    # Check for --autostart parameter
+    if "--autostart" in sys.argv:
+        logger.info("VANGUARD booted in autostart mode; starting minimized.")
+        ui_app.after(1000, lambda: ui_app.withdraw())
+        ui_app.after(1000, lambda: ui_app.mini_badge.show_badge() if hasattr(ui_app, 'mini_badge') and ui_app.mini_badge else None)
+
     ui_app.mainloop()
 
 if __name__ == "__main__":

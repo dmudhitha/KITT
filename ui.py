@@ -16,6 +16,124 @@ from utils import play_sound_async
 
 logger = logging.getLogger("vanguard.ui")
 
+THEMES = {
+    "Neon Red": {"accent": "#FF3333", "scanner": "#FF0000", "glow": "#FF8888", "border": "#330000"},
+    "Cyberpunk Cyan": {"accent": "#00FFFF", "scanner": "#00CCCC", "glow": "#88FFFF", "border": "#003333"},
+    "Matrix Green": {"accent": "#33FF33", "scanner": "#00FF00", "glow": "#88FF88", "border": "#003300"},
+    "Orbital Gold": {"accent": "#FFCC00", "scanner": "#FFAA00", "glow": "#FFE688", "border": "#332200"}
+}
+
+
+class AudioSpectrumVisualizer:
+    """12-bar real-time audio spectrum frequency visualizer widget."""
+
+    def __init__(self, canvas: tk.Canvas, accent_color: str = "#FF3333"):
+        self.canvas = canvas
+        self.accent_color = accent_color
+        self.num_bars = 12
+        self.phase = 0.0
+
+    def update(self, is_active: bool = True) -> None:
+        self.canvas.delete("all")
+        width = self.canvas.winfo_width()
+        height = self.canvas.winfo_height()
+        if width <= 1 or height <= 1:
+            return
+
+        bar_width = max(2, (width - (self.num_bars + 1) * 3) / self.num_bars)
+        self.phase += 0.25
+
+        for i in range(self.num_bars):
+            if is_active:
+                h_factor = (math_sine(i * 10, self.phase * 20, width, height) / max(1, height))
+                h_factor = max(0.15, min(0.95, abs(h_factor) * (0.6 + (i % 4) * 0.15)))
+            else:
+                h_factor = 0.08
+
+            bar_h = height * h_factor
+            x1 = 3 + i * (bar_width + 3)
+            y1 = height - bar_h
+            x2 = x1 + bar_width
+            y2 = height
+
+            self.canvas.create_rectangle(x1, y1, x2, y2, fill=self.accent_color, outline="")
+
+
+class MiniTrayBadge(ctk.CTkToplevel):
+    """Floating borderless desktop badge displayed when VANGUARD main window is minimized."""
+
+    def __init__(self, parent_ui):
+        super().__init__(parent_ui)
+        self.parent_ui = parent_ui
+        self.overrideredirect(True)
+        self.attributes("-topmost", True)
+        self.configure(fg_color="#080808")
+        
+        # Position in bottom-right corner area of desktop
+        screen_w = self.winfo_screenwidth()
+        screen_h = self.winfo_screenheight()
+        w, h = 240, 56
+        x = max(10, screen_w - w - 30)
+        y = max(10, screen_h - h - 70)
+        self.geometry(f"{w}x{h}+{x}+{y}")
+        
+        self.main_frame = ctk.CTkFrame(self, fg_color="#121212", border_color="#FF3333", border_width=1, corner_radius=8)
+        self.main_frame.pack(fill="both", expand=True, padx=2, pady=2)
+        
+        self.scanner_bay = ctk.CTkFrame(self.main_frame, fg_color="#030303", border_color="#330000", border_width=1, width=60, height=28)
+        self.scanner_bay.pack(side="left", padx=8, pady=8)
+        self.scanner_bay.pack_propagate(False)
+        
+        self.mini_scanner = LedScanner(self.scanner_bay, num_segments=8, bg_color="#030303", border_color="#330000")
+        self.mini_scanner.pack(fill="both", expand=True, padx=2, pady=2)
+        self.mini_scanner.start()
+        
+        self.info_frame = ctk.CTkFrame(self.main_frame, fg_color="transparent")
+        self.info_frame.pack(side="left", fill="both", expand=True, padx=4, pady=4)
+        
+        self.lbl_title = ctk.CTkLabel(self.info_frame, text="[VANGUARD AI]", font=(parent_ui.font_family, 11, "bold"), text_color="#FF3333")
+        self.lbl_title.pack(anchor="w")
+        
+        self.lbl_hint = ctk.CTkLabel(self.info_frame, text="Double-Click to Restore", font=(parent_ui.font_family, 9), text_color="#00FFFF")
+        self.lbl_hint.pack(anchor="w")
+        
+        # Bindings for double-click restore, drag, and right-click context menu
+        widgets = [self, self.main_frame, self.scanner_bay, self.info_frame, self.lbl_title, self.lbl_hint]
+        for widget in widgets:
+            widget.bind("<Double-1>", lambda e: parent_ui.after(0, parent_ui.show_window))
+            widget.bind("<Button-1>", self._start_drag)
+            widget.bind("<B1-Motion>", self._do_drag)
+            widget.bind("<Button-3>", self._show_context_menu)
+        
+        self._drag_x = 0
+        self._drag_y = 0
+        
+        # Right-click context popup menu
+        self.menu = tk.Menu(self, tearoff=0, bg="#121212", fg="#FFFFFF", activebackground="#FF3333", activeforeground="#FFFFFF")
+        self.menu.add_command(label="Open VANGUARD", command=lambda: parent_ui.after(0, parent_ui.show_window))
+        self.menu.add_command(label="Toggle Mute", command=lambda: parent_ui.after(0, parent_ui.toggle_mute_from_tray))
+        self.menu.add_separator()
+        self.menu.add_command(label="Exit VANGUARD", command=lambda: parent_ui.after(0, parent_ui.trigger_shutdown))
+
+    def _start_drag(self, event):
+        self._drag_x = event.x
+        self._drag_y = event.y
+
+    def _do_drag(self, event):
+        x = self.winfo_x() + (event.x - self._drag_x)
+        y = self.winfo_y() + (event.y - self._drag_y)
+        self.geometry(f"+{x}+{y}")
+
+    def _show_context_menu(self, event):
+        try:
+            self.menu.tk_popup(event.x_root, event.y_root)
+        finally:
+            self.menu.grab_release()
+
+    def show_badge(self):
+        self.deiconify()
+        self.lift()
+
 
 class VanguardUI(ctk.CTk):
     """Futuristic dashboard UI class for VANGUARD assistant."""
@@ -27,6 +145,7 @@ class VanguardUI(ctk.CTk):
         on_send_callback: Optional[Callable[[str], None]] = None,
         on_mic_callback: Optional[Callable[[], None]] = None,
         on_shutdown_callback: Optional[Callable[[], None]] = None,
+        on_speak_callback: Optional[Callable[[str], None]] = None,
     ):
         super().__init__()
         self.config = config_manager
@@ -35,6 +154,7 @@ class VanguardUI(ctk.CTk):
         self.on_send = on_send_callback
         self.on_mic = on_mic_callback
         self.on_shutdown = on_shutdown_callback
+        self.on_speak = on_speak_callback
 
         # Load window configurations
         self.width = self.config.get("ui", "width", 1024)
@@ -55,10 +175,12 @@ class VanguardUI(ctk.CTk):
         self.is_thinking = False
         self.boot_complete = False
         self.is_shutting_down = False
+        self.tray_icon = None
 
-        # Key Bindings
+        # Key & Window Bindings
         self.bind("<F11>", self.toggle_fullscreen)
         self.bind("<Escape>", self.exit_fullscreen)
+        self.bind("<Unmap>", self._on_unmap)
         self.protocol("WM_DELETE_WINDOW", self.trigger_shutdown)
 
         # Build grid layout
@@ -77,6 +199,15 @@ class VanguardUI(ctk.CTk):
         self.update_clock()
         self.update_diagnostics()
         self.animate_telemetry()
+        self.setup_system_tray()
+
+        # Initialize Mini Desktop Tray Badge overlay
+        try:
+            self.mini_badge = MiniTrayBadge(self)
+            self.mini_badge.withdraw()
+        except Exception as e:
+            logger.warning(f"Could not initialize MiniTrayBadge: {e}")
+            self.mini_badge = None
 
         # Trigger startup sequence
         self.after(500, self.run_boot_sequence)
@@ -233,6 +364,152 @@ class VanguardUI(ctk.CTk):
         )
         self.telemetry_canvas.pack(fill="x", padx=15, pady=5)
         self.sweep_index = 0
+
+        # Language Switcher Segmented Button
+        self.lang_frame = ctk.CTkFrame(self.sidebar, fg_color="transparent")
+        self.lang_frame.pack(fill="x", padx=15, pady=(15, 5))
+        
+        self.lang_label = ctk.CTkLabel(
+            self.lang_frame,
+            text="INTERFACE LANGUAGE",
+            font=(self.font_family, 11, "bold"),
+            text_color=self.accent_color
+        )
+        self.lang_label.pack(anchor="w", pady=2)
+        
+        current_lang = self.config.get("voice", "stt_language", "en-US")
+        initial_val = "Sinhala" if current_lang == "si-LK" else "English"
+        
+        self.lang_toggle = ctk.CTkSegmentedButton(
+            self.lang_frame,
+            values=["English", "Sinhala"],
+            command=self.change_language,
+            selected_color=self.accent_color,
+            selected_hover_color="#550000",
+            fg_color="#1A1A1A",
+            text_color="#FFFFFF"
+        )
+        self.lang_toggle.set(initial_val)
+        self.lang_toggle.pack(fill="x", pady=2)
+
+        # HUD Theme Selector
+        self.theme_frame = ctk.CTkFrame(self.sidebar, fg_color="transparent")
+        self.theme_frame.pack(fill="x", padx=15, pady=(10, 5))
+        
+        self.theme_label = ctk.CTkLabel(
+            self.theme_frame,
+            text="HUD COLOR THEME",
+            font=(self.font_family, 11, "bold"),
+            text_color=self.accent_color
+        )
+        self.theme_label.pack(anchor="w", pady=2)
+        
+        active_theme = self.config.get("ui", "active_theme", "Neon Red")
+        
+        self.theme_menu = ctk.CTkOptionMenu(
+            self.theme_frame,
+            values=["Neon Red", "Cyberpunk Cyan", "Matrix Green", "Orbital Gold"],
+            command=self.change_theme,
+            fg_color="#1A1A1A",
+            button_color=self.accent_color,
+            button_hover_color="#550000",
+            text_color="#FFFFFF"
+        )
+        self.theme_menu.set(active_theme)
+        self.theme_menu.pack(fill="x", pady=2)
+
+        # TTS Sliders Frame
+        self.tts_frame = ctk.CTkFrame(self.sidebar, fg_color="transparent")
+        self.tts_frame.pack(fill="x", padx=15, pady=(10, 5))
+
+        self.tts_label = ctk.CTkLabel(
+            self.tts_frame,
+            text="SPEECH RATE & PITCH",
+            font=(self.font_family, 11, "bold"),
+            text_color=self.accent_color
+        )
+        self.tts_label.pack(anchor="w", pady=2)
+
+        cur_rate = self.config.get("voice", "tts_rate", 150)
+        self.rate_slider = ctk.CTkSlider(
+            self.tts_frame,
+            from_=100,
+            to=250,
+            command=self.change_tts_rate,
+            button_color=self.accent_color,
+            progress_color=self.accent_color
+        )
+        self.rate_slider.set(cur_rate)
+        self.rate_slider.pack(fill="x", pady=2)
+
+        cur_pitch = self.config.get("voice", "tts_pitch", 45)
+        self.pitch_slider = ctk.CTkSlider(
+            self.tts_frame,
+            from_=10,
+            to=90,
+            command=self.change_tts_pitch,
+            button_color=self.accent_color,
+            progress_color=self.accent_color
+        )
+        self.pitch_slider.set(cur_pitch)
+        self.pitch_slider.pack(fill="x", pady=2)
+
+    def change_tts_rate(self, value: float) -> None:
+        """Dynamically adjusts speech synthesis rate (WPM)."""
+        rate = int(value)
+        self.config.set("voice", "tts_rate", rate)
+
+    def change_tts_pitch(self, value: float) -> None:
+        """Dynamically adjusts speech synthesis pitch."""
+        pitch = int(value)
+        self.config.set("voice", "tts_pitch", pitch)
+
+    def change_theme(self, theme_name: str) -> None:
+        """Applies theme color scheme instantly across all GUI elements."""
+        if theme_name not in THEMES:
+            return
+        colors = THEMES[theme_name]
+        self.accent_color = colors["accent"]
+        self.config.set("ui", "active_theme", theme_name)
+        self.config.set("ui", "accent_color", colors["accent"])
+        
+        # Update colors on header, sidebar title, buttons, progress bars
+        self.logo_label.configure(text_color=self.accent_color)
+        self.sidebar_title.configure(text_color=self.accent_color)
+        self.telemetry_title.configure(text_color=self.accent_color)
+        self.lang_label.configure(text_color=self.accent_color)
+        self.theme_label.configure(text_color=self.accent_color)
+        self.theme_menu.configure(button_color=self.accent_color)
+        self.lang_toggle.configure(selected_color=self.accent_color)
+        self.cpu_bar.configure(progress_color=self.accent_color)
+        self.ram_bar.configure(progress_color=self.accent_color)
+        self.disk_bar.configure(progress_color=self.accent_color)
+        self.send_button.configure(fg_color=self.accent_color)
+        self.mic_button.configure(fg_color=self.accent_color)
+        self.console_textbox.configure(border_color=self.accent_color)
+        
+        # Update scanner LED color
+        if hasattr(self, "scanner") and self.scanner:
+            self.scanner.glow_color = colors["scanner"]
+
+        if hasattr(self, "spectrum") and self.spectrum:
+            self.spectrum.accent_color = colors["accent"]
+            
+        self.rate_slider.configure(button_color=self.accent_color, progress_color=self.accent_color)
+        self.pitch_slider.configure(button_color=self.accent_color, progress_color=self.accent_color)
+        self.tts_label.configure(text_color=self.accent_color)
+        
+        play_sound_async("assets/sounds/plugin.wav")
+        self.console_print(f"HUD THEME CHANGED TO '{theme_name.upper()}'.", prefix="[SYSTEM] >> ")
+
+    def change_language(self, language: str) -> None:
+        """Toggles speech-to-text and text-to-speech language preference."""
+        if language == "Sinhala":
+            self.config.set("voice", "stt_language", "si-LK")
+            self.console_print("SPEECH INTERFACE SET TO SINHALA [si-LK]", prefix="[SYSTEM] >> ")
+        else:
+            self.config.set("voice", "stt_language", "en-US")
+            self.console_print("SPEECH INTERFACE SET TO ENGLISH [en-US]", prefix="[SYSTEM] >> ")
 
     def _build_chat_panel(self) -> None:
         """Constructs the chat and input interface."""
@@ -447,14 +724,46 @@ class VanguardUI(ctk.CTk):
                     self.cpu_bar.configure(progress_color="#FF9900")
                 else:
                     self.cpu_bar.configure(progress_color=self.accent_color)
+
+                # 6. Check Autonomous Security Thresholds
+                now = time.time()
+                if not hasattr(self, "_last_alert_time"):
+                    self._last_alert_time = 0
+                    
+                if now - self._last_alert_time > 180:  # Cooldown 3 minutes
+                    cpu_warn = self.config.get("diagnostics", "cpu_warning_threshold", 80.0)
+                    ram_warn = self.config.get("diagnostics", "ram_warning_threshold", 85.0)
+                    
+                    alert_msg = None
+                    if cpu > cpu_warn:
+                        alert_msg = f"VANGUARD SECURITY ALERT: High CPU load detected at {cpu}%."
+                    elif ram > ram_warn:
+                        alert_msg = f"VANGUARD SECURITY ALERT: High RAM memory utilization detected at {ram}%."
+                        
+                    if alert_msg:
+                        self._last_alert_time = now
+                        play_sound_async("assets/sounds/error.wav")
+                        self.console_print(alert_msg, prefix="[SECURITY ALERT] >> ")
+                        self.speak(alert_msg)
                     
             except Exception as e:
                 logger.error(f"Error updating GUI diagnostics: {e}")
 
         self.after(self.config.get("diagnostics", "poll_interval_ms", 1000), self.update_diagnostics)
 
+        # Audio Spectrum Visualizer Canvas
+        self.spectrum_canvas = tk.Canvas(
+            self.sidebar,
+            bg="#030303",
+            highlightthickness=1,
+            highlightbackground="#330000",
+            height=35
+        )
+        self.spectrum_canvas.pack(fill="x", padx=15, pady=(2, 5))
+        self.spectrum = AudioSpectrumVisualizer(self.spectrum_canvas, accent_color=self.accent_color)
+
     def animate_telemetry(self) -> None:
-        """Renders an animated scanning telemetry sine sweep."""
+        """Renders an animated scanning telemetry sine sweep and audio spectrum visualizer."""
         if self.is_shutting_down:
             return
 
@@ -477,6 +786,11 @@ class VanguardUI(ctk.CTk):
             # Draw sweep scanlines
             sweep_x = (self.sweep_index * 4) % width
             self.telemetry_canvas.create_line(sweep_x, 0, sweep_x, height, fill="#FF0000", width=1)
+
+        # Update Audio Spectrum Visualizer
+        if hasattr(self, "spectrum") and self.spectrum:
+            is_active = self.is_listening or self.is_thinking or (hasattr(self, "scanner") and self.scanner and self.scanner.animation_running)
+            self.spectrum.update(is_active=is_active)
 
         self.sweep_index += 1
         self.after(50, self.animate_telemetry)
@@ -552,9 +866,115 @@ class VanguardUI(ctk.CTk):
                         self.console_print(msg["message"], prefix=pfx)
                     self.console_print("---------------------------", prefix="")
 
+                # Trigger Automatic Startup Briefing if enabled
+                if self.config.get("briefing", "enabled", True):
+                    self.after(600, self.trigger_boot_briefing)
+
         self.scanner.start()
         play_sound_async("assets/sounds/boot.wav")
         step_loader(0)
+
+    def trigger_boot_briefing(self) -> None:
+        """Compiles and speaks the automatic startup briefing upon boot completion."""
+        try:
+            from plugins.briefing import BriefingPlugin
+            plugin = BriefingPlugin()
+            location = self.config.get("briefing", "location", "Colombo")
+            text = plugin.generate_briefing(location)
+            self.console_print(text, prefix="[SYSTEM BRIEFING] >> ")
+            logger.info(f"Automatic Spoken Startup Briefing triggered: {text[:60]}...")
+            self.speak(text)
+        except Exception as e:
+            logger.error(f"Boot briefing failed: {e}")
+
+    def speak(self, text: str) -> None:
+        """Delivers text to the background voice synthesizer if available."""
+        if self.on_speak:
+            self.on_speak(text)
+
+    # System Tray & Window State Management
+    def setup_system_tray(self) -> None:
+        """Initializes non-blocking System Tray icon with right-click menu and double-click restore actions."""
+        try:
+            # Enable AyatanaAppIndicator3 alias for modern Linux GNOME desktops
+            import gi
+            try:
+                gi.require_version('AppIndicator3', '0.1')
+            except (ValueError, AttributeError):
+                try:
+                    gi.require_version('AyatanaAppIndicator3', '0.1')
+                    from gi.repository import AyatanaAppIndicator3
+                    import sys
+                    sys.modules['gi.repository.AppIndicator3'] = AyatanaAppIndicator3
+                except Exception:
+                    pass
+
+            import pystray
+            from PIL import Image, ImageDraw
+
+            # Generate high-tech 64x64 icon (dark background with glowing neon red scanner bar)
+            img = Image.new('RGB', (64, 64), color='#080808')
+            draw = ImageDraw.Draw(img)
+            draw.rectangle([4, 4, 59, 59], outline='#FF3333', width=2)
+            draw.rectangle([10, 26, 53, 37], fill='#FF0000', outline='#FF8888')
+            draw.rectangle([22, 28, 41, 35], fill='#FFFFFF')
+
+            # Define context menu options
+            # Setting default=True on 'Open VANGUARD' enables double-click restore behavior
+            menu = pystray.Menu(
+                pystray.MenuItem("Open VANGUARD", lambda icon, item: self.after(0, self.show_window), default=True),
+                pystray.MenuItem("Toggle Mute", lambda icon, item: self.after(0, self.toggle_mute_from_tray)),
+                pystray.MenuItem("Exit VANGUARD", lambda icon, item: self.after(0, self.trigger_shutdown))
+            )
+
+            self.tray_icon = pystray.Icon("VANGUARD", img, "VANGUARD AI Assistant", menu)
+            self.tray_icon.run_detached()
+            logger.info("System Tray interface active (Double-click or Right-click -> Open to restore).")
+        except Exception as e:
+            logger.warning(f"Could not initialize System Tray icon: {e}")
+            self.tray_icon = None
+
+    def show_window(self) -> None:
+        """Restores and displays the application window from system tray or mini badge."""
+        if self.is_shutting_down:
+            return
+        if hasattr(self, "mini_badge") and self.mini_badge:
+            try:
+                self.mini_badge.withdraw()
+            except Exception:
+                pass
+        self.deiconify()
+        self.state("normal")
+        self.lift()
+        self.focus_force()
+        self.console_print("WINDOW RESTORED TO SCREEN.", prefix="[SYSTEM] >> ")
+
+    def _on_unmap(self, event) -> None:
+        """Intercepts window minimize action to hide main window cleanly from OS taskbar and present mini desktop tray badge."""
+        if event.widget == self and not self.is_shutting_down:
+            # Schedule delayed withdraw to ensure window manager completes unmap transition
+            self.after(10, self._do_withdraw_to_tray)
+
+    def _do_withdraw_to_tray(self) -> None:
+        """Executes actual withdraw to remove window from OS taskbar and show tray badge."""
+        if self.is_shutting_down:
+            return
+        if self.state() == "iconic":
+            self.withdraw()
+            if hasattr(self, "mini_badge") and self.mini_badge:
+                try:
+                    self.mini_badge.show_badge()
+                except Exception:
+                    pass
+            self.console_print("WINDOW MINIMIZED & REMOVED FROM TASKBAR. FLOATING TRAY BADGE ACTIVE.", prefix="[SYSTEM] >> ")
+
+    def toggle_mute_from_tray(self) -> None:
+        """Toggles mute mode from tray icon menu."""
+        current_mute = self.config.get("voice", "mute_mode", False)
+        new_mute = not current_mute
+        self.config.set("voice", "mute_mode", new_mute)
+        status_text = "MUTED" if new_mute else "UNMUTED"
+        self.console_print(f"VOICE SYNTHESIS {status_text} VIA TRAY CONTROLS.", prefix="[SYSTEM] >> ")
 
     # Animations: Shutdown sequence
     def trigger_shutdown(self) -> None:
@@ -563,6 +983,20 @@ class VanguardUI(ctk.CTk):
             return
         
         self.is_shutting_down = True
+        if hasattr(self, "mini_badge") and self.mini_badge:
+            try:
+                self.mini_badge.destroy()
+                self.mini_badge = None
+            except Exception:
+                pass
+
+        if self.tray_icon:
+            try:
+                self.tray_icon.stop()
+                self.tray_icon = None
+            except Exception as e:
+                logger.debug(f"Error stopping system tray icon: {e}")
+
         play_sound_async("assets/sounds/shutdown.wav")
         self.scanner.set_mode("off")
         self.scanner.stop()

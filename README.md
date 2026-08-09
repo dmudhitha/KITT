@@ -13,11 +13,21 @@ VANGUARD is a production-quality, highly modular, and futuristic desktop assista
 | Subsystem | Technology | Description |
 | :--- | :--- | :--- |
 | **GUI Dashboard HUD** | `CustomTkinter` | A high-tech black (`#080808`) cockpit theme with neon red accents, responsive gauges, real-time clock, scrollable log console, and telemetry sweeps. |
+| **Bilingual Language Switcher** | `CTkSegmentedButton` | A dedicated UI toggle widget in the sidebar to switch between **English** and **Sinhala** voice inputs on the fly, instantly hot-reloading configurations. |
 | **LED Scanner Widget** | Native TK Canvas | A 16-segment horizontal scanner featuring exponential trail decay, glowing filament cores, and active animation modes (`scan`, `think`, `talk`, `off`). |
-| **Conversational AI** | `OpenAI API` / `Ollama` | Multithreaded streaming client supporting local/remote models with SQLite context memory injections. |
-| **Speech Recognition** | `speech_recognition` | Background wake-word monitoring (`"hey kit"`) and single-shot microphone transcription workers. |
-| **Voice Synthesis** | `pyttsx3` / `espeak-ng` | Thread-safe, pitch-tuned speech synthesis synchronized with the visual LED scanner. |
-| **Telemetry diagnostics** | `psutil` | Real-time scraper polling CPU load, RAM capacity, disk space, battery status, core temperatures, and socket link status. |
+| **Conversational AI** | `OpenAI API` / `Ollama` | Multithreaded streaming client supporting local/remote models with SQLite context memory injections. Understands both Sinhala and English queries. |
+| **Speech Recognition** | `speech_recognition` | Background wake-word monitoring (phonetically tuned to match both English `"hey kit"` and Sinhala `"හේ කිට්"` scripts) and single-shot transcription. |
+| **Voice Synthesis** | `pyttsx3` / `espeak-ng` | Pitch-tuned speech synthesis. **Automatically auto-switches** between optimized American English (`en-us+m3`) and Sinhala (`inc/si`) voice engines by scanning Unicode character blocks. |
+| **Telemetry Diagnostics** | `psutil` | Real-time scraper polling CPU load, RAM capacity, disk space, battery status, core temperatures, and socket link status. |
+| **Global Push-To-Talk Hotkey** | `pynput` | System-wide global shortcut (`Ctrl+Space`) to activate voice commands from anywhere, even when minimized. |
+| **System Control Plugins** | Local Execution | Executes OS-level directives: desktop screenshots (`take screenshot`), volume (`set volume 50%`), and screen locking (`lock pc`). |
+| **Sci-Fi SFX Soundboard** | `pygame.mixer` | Programmatic multi-frequency audio feedback (`boot`, `shutdown`, `wake`, `plugin`, `calc`, `error`, `scan`). |
+| **System Autostart Integration** | `.desktop` Generator | Configures Linux startup entries to auto-launch VANGUARD minimized into tray/badge on boot. |
+| **Sci-Fi HUD Theme Switcher** | `CTkOptionMenu` | Hot-swaps UI color themes on the fly (`Neon Red`, `Cyberpunk Cyan`, `Matrix Green`, `Orbital Gold`). |
+| **Autonomous Security Alerts** | Background Monitor | Polling worker issuing vocal alerts and red scanner warnings on high CPU load/temp or RAM threshold breaches. |
+| **Smart Voice Timers & Reminders** | `RemindersPlugin` | Countdown timer parser with background vocal alarms and chime notifications (`"remind me in 5 minutes"`). |
+| **Speech Rate & Pitch Controls** | `CTkSlider` | Dynamic HUD sidebar sliders adjusting TTS speech rate (100-250 WPM) and voice pitch (10-90) on the fly. |
+| **Audio Spectrum Visualizer** | `AudioSpectrumVisualizer` | 12-bar real-time frequency spectrum equalizer canvas animating dynamically during active speech. |
 | **Plugin Framework** | Dynamically Imported | Reflection-based local registry executing scripting plugins prior to querying the LLM. |
 
 ---
@@ -99,6 +109,7 @@ VANGUARD's settings can be adjusted at runtime. Thanks to the hot-reloading pipe
     "tts_volume": 1.0,
     "tts_pitch": 45,                     // Futuristic deeper pitch
     "tts_variant": "+m3",                // Espeak voice variant (e.g. +m3, +klatt)
+    "stt_language": "si-LK",             // Default capture language ("en-US" or "si-LK")
     "wake_word": "hey kitt"
   }
 ```
@@ -122,13 +133,11 @@ Start the graphical dashboard:
 python3 main.py
 ```
 
-### Interactions to Try
-* **Voice Activation**: Say **`"Hey kit, what is your status?"`** or **`"Hey kit, check my RAM"`**.
-* **Dashboard controls**: Click **`🎤 LISTEN`** to bypass the wake-word and capture speech commands immediately.
-* **Math Plugin**: Type or say **`"calc (25 + 75) * 5"`** (evaluates locally using safe regex parsing).
-* **Browser Plugin**: Type or say **`"open browser github.com"`** (opens your default browser).
-* **Weather Plugin**: Type or say **`"weather London"`** (prints a simulated environmental telemetry scan).
-* **Console commands**: Type **`"help"`** to view all loaded plugins, or **`"shutdown"`** to safely terminate processes.
+### Bilingual Interactions to Try
+* **Switching Languages**: Locate the **INTERFACE LANGUAGE** toggle at the bottom-left of the sidebar HUD. Click **`Sinhala`** or **`English`** to swap modes instantly.
+* **Sinhala Activation**: With the toggle set to `Sinhala`, say **`"හේ කිට්"`** or **`"කිට්"`** (or click **`🎤 LISTEN`**). Ask: **`"ඔයාගේ තත්ත්වය මොකක්ද?"`** (What is your status?).
+* **English Activation**: Toggle back to `English` and say **`"Hey kit, check my RAM"`**.
+* **Auto-Voice Switching**: If the response is generated in Sinhala script, the speaker will load the native Sinhala voice engine (`inc/si`). If the response is in English, it will use the optimized American English engine (`en-us+m3`).
 
 ---
 
